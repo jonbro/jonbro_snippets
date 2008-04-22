@@ -1,0 +1,3 @@
+avr code for the http://evilmadscience.com/tinykitlist/35-tinykitcat/71-peggy
+
+add separate pwm fading code for each row of the pegboard, simplify the process to access each rows pwm.
