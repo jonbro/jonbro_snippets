@@ -1,0 +1,785 @@
+
+peggy.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000034c  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .stab         00000de0  00000000  00000000  000003a0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  2 .stabstr      000007cd  00000000  00000000  00001180  2**0
+                  CONTENTS, READONLY, DEBUGGING
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__ctors_end>
+   4:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+   8:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+   c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  10:	0c 94 66 00 	jmp	0xcc	; 0xcc <__vector_4>
+  14:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  18:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  1c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  20:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  24:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  28:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  2c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  30:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  34:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  38:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  3c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  40:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  44:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  48:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  4c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  50:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  54:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  58:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  5c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  60:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  64:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  68:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  6c:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  70:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  74:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+  78:	0c 94 59 00 	jmp	0xb2	; 0xb2 <__bad_interrupt>
+
+0000007c <__ctors_end>:
+  7c:	11 24       	eor	r1, r1
+  7e:	1f be       	out	0x3f, r1	; 63
+  80:	cf ef       	ldi	r28, 0xFF	; 255
+  82:	d4 e0       	ldi	r29, 0x04	; 4
+  84:	de bf       	out	0x3e, r29	; 62
+  86:	cd bf       	out	0x3d, r28	; 61
+
+00000088 <__do_copy_data>:
+  88:	11 e0       	ldi	r17, 0x01	; 1
+  8a:	a0 e0       	ldi	r26, 0x00	; 0
+  8c:	b1 e0       	ldi	r27, 0x01	; 1
+  8e:	ec e4       	ldi	r30, 0x4C	; 76
+  90:	f3 e0       	ldi	r31, 0x03	; 3
+  92:	02 c0       	rjmp	.+4      	; 0x98 <.do_copy_data_start>
+
+00000094 <.do_copy_data_loop>:
+  94:	05 90       	lpm	r0, Z+
+  96:	0d 92       	st	X+, r0
+
+00000098 <.do_copy_data_start>:
+  98:	a0 30       	cpi	r26, 0x00	; 0
+  9a:	b1 07       	cpc	r27, r17
+  9c:	d9 f7       	brne	.-10     	; 0x94 <.do_copy_data_loop>
+
+0000009e <__do_clear_bss>:
+  9e:	11 e0       	ldi	r17, 0x01	; 1
+  a0:	a0 e0       	ldi	r26, 0x00	; 0
+  a2:	b1 e0       	ldi	r27, 0x01	; 1
+  a4:	01 c0       	rjmp	.+2      	; 0xa8 <.do_clear_bss_start>
+
+000000a6 <.do_clear_bss_loop>:
+  a6:	1d 92       	st	X+, r1
+
+000000a8 <.do_clear_bss_start>:
+  a8:	a0 30       	cpi	r26, 0x00	; 0
+  aa:	b1 07       	cpc	r27, r17
+  ac:	e1 f7       	brne	.-8      	; 0xa6 <.do_clear_bss_loop>
+  ae:	0c 94 7f 00 	jmp	0xfe	; 0xfe <main>
+
+000000b2 <__bad_interrupt>:
+  b2:	0c 94 00 00 	jmp	0	; 0x0 <__heap_end>
+
+000000b6 <delayLong>:
+	...
+			asm("nop");  
+			asm("nop");  
+			asm("nop");  
+			asm("nop");  
+			asm("nop"); 
+  ca:	08 95       	ret
+
+000000cc <__vector_4>:
+}
+
+
+
+/*
+void delayLong() // Alternate scheme
+{
+unsigned int delayvar;
+
+			delayvar = 0; 
+
+//Uncomment the following section to watch the charlieplexed display
+//do its stuff, one line at a time.
+		
+			delayvar = 0; 
+	while (delayvar <=  65000U)		
+		{ 
+			asm("nop");  
+			asm("nop");  
+			asm("nop");  
+			asm("nop");  
+			asm("nop");  
+			delayvar++;
+		} 
+		
+
+}
+*/
+
+
+
+
+
+
+SIGNAL(SIG_PIN_CHANGE0)
+{ 		
+  cc:	1f 92       	push	r1
+  ce:	0f 92       	push	r0
+  d0:	0f b6       	in	r0, 0x3f	; 63
+  d2:	0f 92       	push	r0
+  d4:	11 24       	eor	r1, r1
+  d6:	8f 93       	push	r24
+	DDRD  = 0; // All D Inputs
+  d8:	1a b8       	out	0x0a, r1	; 10
+	PORTD = 0;
+  da:	1b b8       	out	0x0b, r1	; 11
+
+	DDRC  = 0; // All C Inputs
+  dc:	17 b8       	out	0x07, r1	; 7
+	PORTC = 0;
+  de:	18 b8       	out	0x08, r1	; 8
+
+	DDRB  = 0; // All B Inputs
+  e0:	14 b8       	out	0x04, r1	; 4
+	PORTB = 0;
+  e2:	15 b8       	out	0x05, r1	; 5
+
+	DDRA  = 0; // All A Inputs
+  e4:	11 b8       	out	0x01, r1	; 1
+	PORTA = 0;
+  e6:	12 b8       	out	0x02, r1	; 2
+
+	ADCSRA = 0; // Kill ADC
+  e8:	10 92 7a 00 	sts	0x007A, r1
+
+	SMCR = 5U;
+  ec:	85 e0       	ldi	r24, 0x05	; 5
+  ee:	83 bf       	out	0x33, r24	; 51
+	asm("sleep");		//Go to sleep!
+  f0:	88 95       	sleep
+  f2:	8f 91       	pop	r24
+  f4:	0f 90       	pop	r0
+  f6:	0f be       	out	0x3f, r0	; 63
+  f8:	0f 90       	pop	r0
+  fa:	1f 90       	pop	r1
+  fc:	18 95       	reti
+
+000000fe <main>:
+}
+
+
+
+
+
+int main (void)
+{ 
+  fe:	2f 92       	push	r2
+ 100:	3f 92       	push	r3
+ 102:	4f 92       	push	r4
+ 104:	5f 92       	push	r5
+ 106:	6f 92       	push	r6
+ 108:	7f 92       	push	r7
+ 10a:	8f 92       	push	r8
+ 10c:	9f 92       	push	r9
+ 10e:	af 92       	push	r10
+ 110:	bf 92       	push	r11
+ 112:	cf 92       	push	r12
+ 114:	df 92       	push	r13
+ 116:	ef 92       	push	r14
+ 118:	ff 92       	push	r15
+ 11a:	0f 93       	push	r16
+ 11c:	1f 93       	push	r17
+ 11e:	cf 93       	push	r28
+ 120:	df 93       	push	r29
+	asm("cli");		// DISABLE global interrupts
+ 122:	f8 94       	cli
+
+
+	unsigned int ADIn,  ADoutTemp, ADLast;
+	unsigned int ADCcount;
+
+	unsigned short LightsOn, EnableLights, AutoMode; 
+	unsigned short ADdelay, PWMVal, phase, Cmask, rs, rs2; 
+
+	unsigned int ResOffCt;
+
+	unsigned short ResOn, ResOnLocal, SweepDir, ResOffCtLocal;
+	unsigned int AutoStage; 
+
+	unsigned short maskCounter, maskOn, maskRatio, maskRatioBig;
+
+
+	maskRatioBig = 0;
+	maskCounter = 0;
+
+	rs2 = 0;
+	Cmask = 0;
+
+	ADdelay = 0;
+	ResOffCtLocal = 0;
+	ADCcount = 0;
+	EnableLights = 1;	// Basic conditions met
+	LightsOn = 1;		// actually turn lights on
+	AutoMode = 1;   //Whether we are in the auto/start-up/power down sequence
+	AutoStage = 0;	// If so, which stage we are in
+	// 0: Initialization
+	// 1: Initial fading/blinking on
+	// 2: steady on for some hours
+	// 3: power down until it goes dark again
+
+	DDRA  = 0; // All A Inputs
+ 124:	11 b8       	out	0x01, r1	; 1
+	PORTA = 0;
+ 126:	12 b8       	out	0x02, r1	; 2
+
+	ResOffCt = 0; 
+
+	phase = 0;
+	
+	rs = 0;	
+	
+	ADIn = 10000U;
+
+	// General Hardware Initialization:
+
+	MCUCR |= (1 << 4); // Disable pull-ups
+ 128:	85 b7       	in	r24, 0x35	; 53
+ 12a:	80 61       	ori	r24, 0x10	; 16
+ 12c:	85 bf       	out	0x35, r24	; 53
+
+	PCMSK0 = 4U; // Pin change interrupt mask
+ 12e:	84 e0       	ldi	r24, 0x04	; 4
+ 130:	80 93 6b 00 	sts	0x006B, r24
+	PCICR = 1; // Enable PCINTs on PCMSK0
+ 134:	81 e0       	ldi	r24, 0x01	; 1
+ 136:	80 93 68 00 	sts	0x0068, r24
+
+		
+	DDRD  = 0; // All D Inputs
+ 13a:	1a b8       	out	0x0a, r1	; 10
+	PORTD = 255U;
+ 13c:	8f ef       	ldi	r24, 0xFF	; 255
+ 13e:	8b b9       	out	0x0b, r24	; 11
+
+	DDRC  = 0; // All C Inputs
+ 140:	17 b8       	out	0x07, r1	; 7
+	PORTC = 255U;
+ 142:	88 b9       	out	0x08, r24	; 8
+
+	DDRB  = 0; // All B Inputs
+ 144:	14 b8       	out	0x04, r1	; 4
+	PORTB = 255U;
+ 146:	85 b9       	out	0x05, r24	; 5
+
+	DDRA  = 0; // All A Inputs
+ 148:	11 b8       	out	0x01, r1	; 1
+	PORTA = 255U;
+ 14a:	82 b9       	out	0x02, r24	; 2
+
+
+
+
+	ADMUX = 5U;		// Channel 3 only
+ 14c:	85 e0       	ldi	r24, 0x05	; 5
+ 14e:	80 93 7c 00 	sts	0x007C, r24
+
+	ADCSRA = _BV(ADEN) |_BV(ADPS2) | _BV(ADPS1) | _BV(ADPS0)  ;  // Enable ADC, prescale at 128.
+ 152:	87 e8       	ldi	r24, 0x87	; 135
+ 154:	80 93 7a 00 	sts	0x007A, r24
+
+	ADoutTemp = 0;
+
+
+	ADCSRA |= _BV(ADSC);	// Start initial ADC cycle
+ 158:	80 91 7a 00 	lds	r24, 0x007A
+ 15c:	80 64       	ori	r24, 0x40	; 64
+ 15e:	80 93 7a 00 	sts	0x007A, r24
+
+
+
+	while ((ADCSRA & _BV(ADSC)) != 0){;;}		// Wait until conversion has finished
+ 162:	80 91 7a 00 	lds	r24, 0x007A
+ 166:	86 fd       	sbrc	r24, 6
+ 168:	fc cf       	rjmp	.-8      	; 0x162 <main+0x64>
+
+		ADIn = ADCW;	
+ 16a:	80 91 78 00 	lds	r24, 0x0078
+ 16e:	90 91 79 00 	lds	r25, 0x0079
+
+
+	ADLast = ADIn;
+
+
+
+
+
+
+
+
+
+
+
+	ADMUX = 3U;		// Channel 3 only
+ 172:	83 e0       	ldi	r24, 0x03	; 3
+ 174:	80 93 7c 00 	sts	0x007C, r24
+
+	//Initialization for Multiplexed drive
+	DDRC  = 255; // All C Inputs
+ 178:	9f ef       	ldi	r25, 0xFF	; 255
+ 17a:	97 b9       	out	0x07, r25	; 7
+	PORTC = 64U;
+ 17c:	80 e4       	ldi	r24, 0x40	; 64
+ 17e:	88 b9       	out	0x08, r24	; 8
+
+	PORTA = 0;
+ 180:	12 b8       	out	0x02, r1	; 2
+	PORTB = 0;
+ 182:	15 b8       	out	0x05, r1	; 5
+	PORTC = 0;
+ 184:	18 b8       	out	0x08, r1	; 8
+	PORTD = 0;
+ 186:	1b b8       	out	0x0b, r1	; 11
+
+	DDRA = 192U;
+ 188:	80 ec       	ldi	r24, 0xC0	; 192
+ 18a:	81 b9       	out	0x01, r24	; 1
+	DDRB = 255U;
+ 18c:	94 b9       	out	0x04, r25	; 4
+	DDRC = 255U;
+ 18e:	97 b9       	out	0x07, r25	; 7
+	DDRD = 255U;
+ 190:	9a b9       	out	0x0a, r25	; 10
+
+	ResOn = 1; 
+	PWMVal = 8;
+		
+	SweepDir = 1;
+
+	asm("sei");		// ENABLE global interrupts
+ 192:	78 94       	sei
+ 194:	f8 e0       	ldi	r31, 0x08	; 8
+ 196:	6f 2e       	mov	r6, r31
+ 198:	71 2c       	mov	r7, r1
+ 19a:	88 24       	eor	r8, r8
+ 19c:	99 24       	eor	r9, r9
+ 19e:	c0 e0       	ldi	r28, 0x00	; 0
+ 1a0:	d0 e0       	ldi	r29, 0x00	; 0
+ 1a2:	e1 e0       	ldi	r30, 0x01	; 1
+ 1a4:	2e 2e       	mov	r2, r30
+ 1a6:	31 2c       	mov	r3, r1
+ 1a8:	44 24       	eor	r4, r4
+ 1aa:	55 24       	eor	r5, r5
+
+
+
+
+	for (;;){
+		// main loop
+		if (ADdelay == 255){
+			if ((ADCSRA & _BV(ADSC)) == 0){		// If conversion has finished
+				ADIn = ADCW;		
+				if (ADIn < 25) {
+					EnableLights = 1; 
+					ADCcount = 0;
+					AutoMode = 0; 
+				}	
+				else if (ADIn < 975){		// It's Dark out! Turn on the lights!
+					if (EnableLights == 1){
+						ADCcount++;
+					}else{
+						ADCcount = 0;					
+					}
+				}else{	// if (ADIn > 975), meaning that it's DARK out...		
+					if (EnableLights == 0){
+						ADCcount++;				
+					}else{
+						ADCcount = 0;				
+					}
+				}
+				if (ADCcount > 1000U){
+					ADCcount = 0;
+					AutoMode = 1;
+					if (ADIn < 975){
+						EnableLights = 0;    
+					}else{
+						EnableLights = 1; 
+					}	
+				}
+
+				ADCSRA |= _BV(ADSC);	// Start ADC
+			}else{
+				ADdelay++;			
+			}
+		}
+		ResOffCt++;
+ 1ac:	21 96       	adiw	r28, 0x01	; 1
+		rs++;
+		if (rs == 255){
+			rs = 0; 			
+		}
+
+
+		// Phases:  0: Standard w/o noise
+		//1 delay
+		//2: standard with noise
+		//3 delay
+
+		if (phase == 1){
+ 1ae:	81 e0       	ldi	r24, 0x01	; 1
+ 1b0:	88 16       	cp	r8, r24
+ 1b2:	91 04       	cpc	r9, r1
+ 1b4:	21 f0       	breq	.+8      	; 0x1be <main+0xc0>
+			ResOffCt += 5;			
+		}
+	
+		if (phase == 3){
+ 1b6:	83 e0       	ldi	r24, 0x03	; 3
+ 1b8:	88 16       	cp	r8, r24
+ 1ba:	91 04       	cpc	r9, r1
+ 1bc:	09 f4       	brne	.+2      	; 0x1c0 <main+0xc2>
+			ResOffCt += 5;			
+ 1be:	25 96       	adiw	r28, 0x05	; 5
+		}
+	
+
+		if (ResOffCt > 375) // Every 375 cycles increment PWM
+ 1c0:	81 e0       	ldi	r24, 0x01	; 1
+ 1c2:	c8 37       	cpi	r28, 0x78	; 120
+ 1c4:	d8 07       	cpc	r29, r24
+ 1c6:	50 f1       	brcs	.+84     	; 0x21c <main+0x11e>
+		{
+
+		rs2++; 
+		Cmask = ~(1 << rs2) ; // Generate simple scan lines
+
+		Cmask |= rs;	// Add noise to scan lines
+
+		if (rs2 > 7){
+			rs2 = 0;	
+		}
+
+		ResOffCt = 0;
+
+		if (SweepDir == 1){
+ 1c8:	81 e0       	ldi	r24, 0x01	; 1
+ 1ca:	28 16       	cp	r2, r24
+ 1cc:	31 04       	cpc	r3, r1
+ 1ce:	79 f4       	brne	.+30     	; 0x1ee <main+0xf0>
+			PWMVal++;
+ 1d0:	08 94       	sec
+ 1d2:	61 1c       	adc	r6, r1
+ 1d4:	71 1c       	adc	r7, r1
+			if (PWMVal > 127){
+ 1d6:	80 e8       	ldi	r24, 0x80	; 128
+ 1d8:	68 16       	cp	r6, r24
+ 1da:	71 04       	cpc	r7, r1
+ 1dc:	e8 f0       	brcs	.+58     	; 0x218 <main+0x11a>
+ 1de:	7f e7       	ldi	r23, 0x7F	; 127
+ 1e0:	67 2e       	mov	r6, r23
+ 1e2:	71 2c       	mov	r7, r1
+ 1e4:	c0 e0       	ldi	r28, 0x00	; 0
+ 1e6:	d0 e0       	ldi	r29, 0x00	; 0
+ 1e8:	22 24       	eor	r2, r2
+ 1ea:	33 24       	eor	r3, r3
+ 1ec:	17 c0       	rjmp	.+46     	; 0x21c <main+0x11e>
+				PWMVal = 127;
+				SweepDir = 0;
+			}
+		}else{
+			PWMVal--;
+ 1ee:	08 94       	sec
+ 1f0:	61 08       	sbc	r6, r1
+ 1f2:	71 08       	sbc	r7, r1
+			if (PWMVal == 0){
+ 1f4:	61 14       	cp	r6, r1
+ 1f6:	71 04       	cpc	r7, r1
+ 1f8:	79 f4       	brne	.+30     	; 0x218 <main+0x11a>
+				SweepDir = 1;
+				phase++;
+ 1fa:	08 94       	sec
+ 1fc:	81 1c       	adc	r8, r1
+ 1fe:	91 1c       	adc	r9, r1
+				if (phase == 4){
+ 200:	84 e0       	ldi	r24, 0x04	; 4
+ 202:	88 16       	cp	r8, r24
+ 204:	91 04       	cpc	r9, r1
+ 206:	11 f4       	brne	.+4      	; 0x20c <main+0x10e>
+ 208:	88 24       	eor	r8, r8
+ 20a:	99 24       	eor	r9, r9
+ 20c:	c0 e0       	ldi	r28, 0x00	; 0
+ 20e:	d0 e0       	ldi	r29, 0x00	; 0
+ 210:	61 e0       	ldi	r22, 0x01	; 1
+ 212:	26 2e       	mov	r2, r22
+ 214:	31 2c       	mov	r3, r1
+ 216:	02 c0       	rjmp	.+4      	; 0x21c <main+0x11e>
+ 218:	c0 e0       	ldi	r28, 0x00	; 0
+ 21a:	d0 e0       	ldi	r29, 0x00	; 0
+					phase = 0;
+				}
+			}
+		}
+	}
+	
+
+
+		// Phases:  0: Standard w/o noise
+		//1 delay
+		//2: standard with noise
+		//3 delay
+
+
+		
+		ResOffCtLocal++;		// PWM variable
+ 21c:	08 94       	sec
+ 21e:	41 1c       	adc	r4, r1
+ 220:	51 1c       	adc	r5, r1
+		if (ResOffCtLocal > 126)
+ 222:	8f e7       	ldi	r24, 0x7F	; 127
+ 224:	48 16       	cp	r4, r24
+ 226:	51 04       	cpc	r5, r1
+ 228:	18 f0       	brcs	.+6      	; 0x230 <main+0x132>
+ 22a:	44 24       	eor	r4, r4
+ 22c:	55 24       	eor	r5, r5
+ 22e:	03 c0       	rjmp	.+6      	; 0x236 <main+0x138>
+			ResOffCtLocal = 0;
+		
+		if (ResOffCtLocal > PWMVal)
+ 230:	64 14       	cp	r6, r4
+ 232:	75 04       	cpc	r7, r5
+ 234:	38 f0       	brcs	.+14     	; 0x244 <main+0x146>
+			ResOnLocal = 0;		// Turn LEDs off for part of the time.
+		else	{
+
+				ResOnLocal = 0;
+	
+			if (phase == 0)
+ 236:	81 14       	cp	r8, r1
+ 238:	91 04       	cpc	r9, r1
+ 23a:	99 f1       	breq	.+102    	; 0x2a2 <main+0x1a4>
+				ResOnLocal = 1;
+
+			if (phase == 2)
+ 23c:	82 e0       	ldi	r24, 0x02	; 2
+ 23e:	88 16       	cp	r8, r24
+ 240:	91 04       	cpc	r9, r1
+ 242:	79 f1       	breq	.+94     	; 0x2a2 <main+0x1a4>
+				ResOnLocal = 1;
+				
+		
+		
+		}
+
+
+		if (phase == 2) 
+			maskRatio  = ( PWMVal) >> 3; 
+		else
+			maskRatio = 0;
+	
+		//maskRatio = 15;  // Lots of glitches
+		//maskRatio = 0; // No glitches
+
+		
+		maskCounter++;		// PWM variable
+		if (maskCounter > 15)
+			maskCounter = 0;
+	
+		if (maskCounter > maskRatio)
+			maskOn = 0;		// Turn LEDs off for part of the time.
+		else
+			maskOn = 1;
+
+
+
+
+
+		if (EnableLights) {
+			if (ResOnLocal) {
+				PORTA = 64;
+				delayLong();
+				PORTA = 128;
+				delayLong();
+				PORTA = 0; 
+
+				PORTB = 1;
+				delayLong();
+				PORTB = 2;
+				delayLong();
+				PORTB = 4;
+				delayLong();
+				PORTB = 8;
+				delayLong();
+				PORTB = 16;
+				delayLong();
+				PORTB = 32;
+				delayLong();
+				PORTB = 64;
+				delayLong();
+				PORTB = 128;
+				delayLong();
+				PORTB = 0; 
+
+				PORTC = 0;
+				delayLong();
+				PORTC = 0;
+				delayLong();
+				PORTC = 0;
+				delayLong();
+				PORTC = 0;// Row 8
+				delayLong();
+				PORTC = 0;
+				
+				PORTD = 1;
+				delayLong();
+				PORTD = 2;
+				delayLong();
+				PORTD = 4;
+				delayLong();
+				PORTD = 8;
+				delayLong();
+				PORTD = 16;
+				delayLong();
+				PORTD = 32;
+				delayLong();
+				PORTD = 64;
+				delayLong();
+				PORTD = 128;
+				delayLong();
+				PORTD = 0;
+			}else{	// ResOff
+				PORTC = 1;
+ 244:	81 e0       	ldi	r24, 0x01	; 1
+ 246:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 248:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 2;
+ 24c:	82 e0       	ldi	r24, 0x02	; 2
+ 24e:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 250:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 4;
+ 254:	84 e0       	ldi	r24, 0x04	; 4
+ 256:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 258:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 8;
+ 25c:	88 e0       	ldi	r24, 0x08	; 8
+ 25e:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 260:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 16;
+ 264:	80 e1       	ldi	r24, 0x10	; 16
+ 266:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 268:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 32;
+ 26c:	80 e2       	ldi	r24, 0x20	; 32
+ 26e:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 270:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 64;
+ 274:	80 e4       	ldi	r24, 0x40	; 64
+ 276:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 278:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 128;
+ 27c:	80 e8       	ldi	r24, 0x80	; 128
+ 27e:	88 b9       	out	0x08, r24	; 8
+				delayLong();
+ 280:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTC = 0; 
+ 284:	18 b8       	out	0x08, r1	; 8
+				
+				
+		
+				PORTD = 0;	// Row 7
+ 286:	1b b8       	out	0x0b, r1	; 11
+				delayLong();
+ 288:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTD = 0;
+ 28c:	1b b8       	out	0x0b, r1	; 11
+				delayLong();
+ 28e:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTD = 0;
+ 292:	1b b8       	out	0x0b, r1	; 11
+				delayLong();
+ 294:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTD = 0;
+ 298:	1b b8       	out	0x0b, r1	; 11
+				delayLong();
+ 29a:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+				PORTD = 0;
+ 29e:	1b b8       	out	0x0b, r1	; 11
+ 2a0:	51 c0       	rjmp	.+162    	; 0x344 <main+0x246>
+ 2a2:	00 e4       	ldi	r16, 0x40	; 64
+ 2a4:	02 b9       	out	0x02, r16	; 2
+ 2a6:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2aa:	10 e8       	ldi	r17, 0x80	; 128
+ 2ac:	12 b9       	out	0x02, r17	; 2
+ 2ae:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2b2:	12 b8       	out	0x02, r1	; 2
+ 2b4:	51 e0       	ldi	r21, 0x01	; 1
+ 2b6:	a5 2e       	mov	r10, r21
+ 2b8:	a5 b8       	out	0x05, r10	; 5
+ 2ba:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2be:	42 e0       	ldi	r20, 0x02	; 2
+ 2c0:	b4 2e       	mov	r11, r20
+ 2c2:	b5 b8       	out	0x05, r11	; 5
+ 2c4:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2c8:	34 e0       	ldi	r19, 0x04	; 4
+ 2ca:	c3 2e       	mov	r12, r19
+ 2cc:	c5 b8       	out	0x05, r12	; 5
+ 2ce:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2d2:	28 e0       	ldi	r18, 0x08	; 8
+ 2d4:	d2 2e       	mov	r13, r18
+ 2d6:	d5 b8       	out	0x05, r13	; 5
+ 2d8:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2dc:	90 e1       	ldi	r25, 0x10	; 16
+ 2de:	e9 2e       	mov	r14, r25
+ 2e0:	e5 b8       	out	0x05, r14	; 5
+ 2e2:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2e6:	80 e2       	ldi	r24, 0x20	; 32
+ 2e8:	f8 2e       	mov	r15, r24
+ 2ea:	f5 b8       	out	0x05, r15	; 5
+ 2ec:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2f0:	05 b9       	out	0x05, r16	; 5
+ 2f2:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2f6:	15 b9       	out	0x05, r17	; 5
+ 2f8:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 2fc:	15 b8       	out	0x05, r1	; 5
+ 2fe:	18 b8       	out	0x08, r1	; 8
+ 300:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 304:	18 b8       	out	0x08, r1	; 8
+ 306:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 30a:	18 b8       	out	0x08, r1	; 8
+ 30c:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 310:	18 b8       	out	0x08, r1	; 8
+ 312:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 316:	18 b8       	out	0x08, r1	; 8
+ 318:	ab b8       	out	0x0b, r10	; 11
+ 31a:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 31e:	bb b8       	out	0x0b, r11	; 11
+ 320:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 324:	cb b8       	out	0x0b, r12	; 11
+ 326:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 32a:	db b8       	out	0x0b, r13	; 11
+ 32c:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 330:	eb b8       	out	0x0b, r14	; 11
+ 332:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 336:	fb b8       	out	0x0b, r15	; 11
+ 338:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 33c:	0b b9       	out	0x0b, r16	; 11
+ 33e:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 342:	1b b9       	out	0x0b, r17	; 11
+ 344:	0e 94 5b 00 	call	0xb6	; 0xb6 <delayLong>
+ 348:	1b b8       	out	0x0b, r1	; 11
+ 34a:	30 cf       	rjmp	.-416    	; 0x1ac <main+0xae>
