@@ -93,16 +93,9 @@ Initial version
 
 */
 
-
-
-
-
-
-
-
-
 #include <avr/io.h> 
 #include <avr/interrupt.h>
+#include "pwm.h"
 
 void delayLong()
 {
@@ -170,57 +163,61 @@ SIGNAL(SIG_PIN_CHANGE0)
 	asm("sleep");		//Go to sleep!
 }
 
+void light_row(int row_num){
+	if(row_num<8){
+		PORTD = 1;
+		delayLong();
+	}else if(row_num<16){
+		
+	}else if(row_num<24){
 
+	}else{
 
+	}
+}
 
+void update_pwm_m(struct pwm_manager * pm){
+	pm->ResOffCt++;
+	if (pm->ResOffCt > pm->loop_length){ // only increment the pwm every so often
+		pm->ResOffCt = 0;
+		if (pm->SweepDir == 1){
+			pm->PWMVal++;
+			if (pm->PWMVal > 127){
+				pm->PWMVal = 127;
+				pm->SweepDir = 0;
+			}
+		}else{
+			pm->PWMVal--;
+			if (pm->PWMVal == 0){
+				pm->SweepDir = 1;
+			}
+		}
+	}
+	
+	pm->ResOffCtLocal++;		// PWM variable
+	if (pm->ResOffCtLocal > 126){
+		pm->ResOffCtLocal = 0;
+	}
+	
+	if (pm->ResOffCtLocal > pm->PWMVal){
+		pm->ResOnLocal = 0;		// Turn LEDs off for part of the time.
+	}else{
+		pm->ResOnLocal = 0;
+		if (pm->phase == 0){
+			pm->ResOnLocal = 1;
+		}
+	}
+}
 
 int main (void)
 { 
+	int num_rows = 25;
+	struct pwm_manager pwm_m[num_rows], *pm;
+	int i=0;
+	
 	asm("cli");		// DISABLE global interrupts
-
-
-	unsigned int ADIn,  ADoutTemp, ADLast;
-	unsigned int ADCcount;
-
-	unsigned short LightsOn, EnableLights, AutoMode; 
-	unsigned short ADdelay, PWMVal, phase, Cmask, rs, rs2; 
-
-	unsigned int ResOffCt;
-
-	unsigned short ResOn, ResOnLocal, SweepDir, ResOffCtLocal;
-	unsigned int AutoStage; 
-
-	unsigned short maskCounter, maskOn, maskRatio, maskRatioBig;
-
-
-	maskRatioBig = 0;
-	maskCounter = 0;
-
-	rs2 = 0;
-	Cmask = 0;
-
-	ADdelay = 0;
-	ResOffCtLocal = 0;
-	ADCcount = 0;
-	EnableLights = 1;	// Basic conditions met
-	LightsOn = 1;		// actually turn lights on
-	AutoMode = 1;   //Whether we are in the auto/start-up/power down sequence
-	AutoStage = 0;	// If so, which stage we are in
-	// 0: Initialization
-	// 1: Initial fading/blinking on
-	// 2: steady on for some hours
-	// 3: power down until it goes dark again
-
 	DDRA  = 0; // All A Inputs
 	PORTA = 0;
-
-	ResOffCt = 0; 
-
-	phase = 0;
-	
-	rs = 0;	
-	
-	ADIn = 10000U;
 
 	// General Hardware Initialization:
 
@@ -241,38 +238,11 @@ int main (void)
 
 	DDRA  = 0; // All A Inputs
 	PORTA = 255U;
-
-
-
-
 	ADMUX = 5U;		// Channel 3 only
-
 	ADCSRA = _BV(ADEN) |_BV(ADPS2) | _BV(ADPS1) | _BV(ADPS0)  ;  // Enable ADC, prescale at 128.
 
-	ADoutTemp = 0;
-
-
 	ADCSRA |= _BV(ADSC);	// Start initial ADC cycle
-
-
-
 	while ((ADCSRA & _BV(ADSC)) != 0){;;}		// Wait until conversion has finished
-
-		ADIn = ADCW;	
-
-
-	ADLast = ADIn;
-
-
-
-
-
-
-
-
-
-
-
 	ADMUX = 3U;		// Channel 3 only
 
 	//Initialization for Multiplexed drive
@@ -288,246 +258,73 @@ int main (void)
 	DDRB = 255U;
 	DDRC = 255U;
 	DDRD = 255U;
-
-	ResOn = 1; 
-	PWMVal = 8;
-		
-	SweepDir = 1;
-
-	asm("sei");		// ENABLE global interrupts
-
-
-
-
-	for (;;){
-		// main loop
-		if (ADdelay == 255){
-			if ((ADCSRA & _BV(ADSC)) == 0){		// If conversion has finished
-				ADIn = ADCW;		
-				if (ADIn < 25) {
-					EnableLights = 1; 
-					ADCcount = 0;
-					AutoMode = 0; 
-				}	
-				else if (ADIn < 975){		// It's Dark out! Turn on the lights!
-					if (EnableLights == 1){
-						ADCcount++;
-					}else{
-						ADCcount = 0;					
-					}
-				}else{	// if (ADIn > 975), meaning that it's DARK out...		
-					if (EnableLights == 0){
-						ADCcount++;				
-					}else{
-						ADCcount = 0;				
-					}
-				}
-				if (ADCcount > 1000U){
-					ADCcount = 0;
-					AutoMode = 1;
-					if (ADIn < 975){
-						EnableLights = 0;    
-					}else{
-						EnableLights = 1; 
-					}	
-				}
-
-				ADCSRA |= _BV(ADSC);	// Start ADC
-			}else{
-				ADdelay++;			
-			}
-		}
-		ResOffCt++;
-		rs++;
-		if (rs == 255){
-			rs = 0; 			
-		}
-
-
-		// Phases:  0: Standard w/o noise
-		//1 delay
-		//2: standard with noise
-		//3 delay
-
-		if (phase == 1){
-			ResOffCt += 5;			
-		}
 	
-		if (phase == 3){
-			ResOffCt += 5;			
-		}
-	
-
-		if (ResOffCt > 375) // Every 375 cycles increment PWM
-		{
-
-		rs2++; 
-		Cmask = ~(1 << rs2) ; // Generate simple scan lines
-
-		Cmask |= rs;	// Add noise to scan lines
-
-		if (rs2 > 7){
-			rs2 = 0;	
-		}
-
-		ResOffCt = 0;
-
-		if (SweepDir == 1){
-			PWMVal++;
-			if (PWMVal > 127){
-				PWMVal = 127;
-				SweepDir = 0;
-			}
-		}else{
-			PWMVal--;
-			if (PWMVal == 0){
-				SweepDir = 1;
-				phase++;
-				if (phase == 4){
-					phase = 0;
-				}
-			}
-		}
+	for(i=0;i<num_rows;i++){
+		pwm_m[i].ResOffCt = 0; 
+		pwm_m[i].ResOffCtLocal = 0;
+		pwm_m[i].phase = 0;
+		pwm_m[i].ResOn = 1; 
+		pwm_m[i].PWMVal = 8;
+		pwm_m[i].SweepDir = 1;
+		pwm_m[i].loop_length = 375-i*10;		
 	}
-	
 
-
-		// Phases:  0: Standard w/o noise
-		//1 delay
-		//2: standard with noise
-		//3 delay
-
-
+	// pwm_m.ResOffCt = 0; 
+	// pwm_m.ResOffCtLocal = 0;
+	// pwm_m.phase = 0;
+	// pwm_m.ResOn = 1; 
+	// pwm_m.PWMVal = 8;
+	// pwm_m.SweepDir = 1;
+	// pwm_m.loop_length = 375;
+	asm("sei");		// ENABLE global interrupts
+	for (;;){
 		
-		ResOffCtLocal++;		// PWM variable
-		if (ResOffCtLocal > 126)
-			ResOffCtLocal = 0;
+		PORTA = 64;
+		delayLong();
+		PORTA = 128;
+		delayLong();
+		PORTA = 0;
+
+		PORTB = 0;
+		PORTC = 0;
+		PORTD = 0;
 		
-		if (ResOffCtLocal > PWMVal)
-			ResOnLocal = 0;		// Turn LEDs off for part of the time.
-		else	{
-
-				ResOnLocal = 0;
-	
-			if (phase == 0)
-				ResOnLocal = 1;
-
-			if (phase == 2)
-				ResOnLocal = 1;
-				
-		
-		
-		}
-
-
-		if (phase == 2) 
-			maskRatio  = ( PWMVal) >> 3; 
-		else
-			maskRatio = 0;
-	
-		//maskRatio = 15;  // Lots of glitches
-		//maskRatio = 0; // No glitches
-
-		
-		maskCounter++;		// PWM variable
-		if (maskCounter > 15)
-			maskCounter = 0;
-	
-		if (maskCounter > maskRatio)
-			maskOn = 0;		// Turn LEDs off for part of the time.
-		else
-			maskOn = 1;
-
-
-
-
-
-		if (EnableLights) {
-			if (ResOnLocal) {
-				PORTA = 64;
-				delayLong();
-				PORTA = 128;
-				delayLong();
-				PORTA = 0; 
-
-				PORTB = 1;
-				delayLong();
-				PORTB = 2;
-				delayLong();
-				PORTB = 4;
-				delayLong();
-				PORTB = 8;
-				delayLong();
-				PORTB = 16;
-				delayLong();
-				PORTB = 32;
-				delayLong();
-				PORTB = 64;
-				delayLong();
-				PORTB = 128;
-				delayLong();
-				PORTB = 0; 
-
-				PORTC = 0;
-				delayLong();
-				PORTC = 0;
-				delayLong();
-				PORTC = 0;
-				delayLong();
-				PORTC = 0;// Row 8
-				delayLong();
-				PORTC = 0;
-				PORTD = 1;
-				delayLong();
-				PORTD = 2;
-				delayLong();
-				PORTD = 4;
-				delayLong();
-				PORTD = 8;
-				delayLong();
-				PORTD = 16;
-				delayLong();
-				PORTD = 32;
-				delayLong();
-				PORTD = 64;
-				delayLong();
-				PORTD = 128;
-				delayLong();
-				PORTD = 0;
-			}else{	// ResOff
-				PORTC = 1;
-				delayLong();
-				PORTC = 2;
-				delayLong();
-				PORTC = 4;
-				delayLong();
-				PORTC = 8;
-				delayLong();
-				PORTC = 16;
-				delayLong();
-				PORTC = 32;
-				delayLong();
-				PORTC = 64;
-				delayLong();
-				PORTC = 128;
-				delayLong();
-				PORTC = 0; 
-				
-				
-		
-				PORTD = 0;	// Row 7
-				delayLong();
-				PORTD = 0;
-				delayLong();
-				PORTD = 0;
-				delayLong();
-				PORTD = 0;
-				delayLong();
-				PORTD = 0;
-				delayLong();
-				PORTD = 0; 
+		for(i=0;i<12;i++){
+			pm = &pwm_m[i];        			/* put the address of 'pwm_m[0]' into 'pm' */
+			update_pwm_m(pm);
+			if(i<4){
+				if(pwm_m[i].ResOnLocal){
+					PORTB ^= 0b000011 << i*2;
+				}
+			}else if(i<8){
+				if(pwm_m[i].ResOnLocal){
+					PORTC ^= 0b000011 << (i-4)*2;
+				}
+			}else{
+				if(pwm_m[i].ResOnLocal){
+					PORTD ^= 0b000011 << (i-8)*2;
+				}
 			}
-		} 
+		}
+		 
+		
+		// if (pwm_m[0].ResOnLocal) {
+		// 	PORTB = 0b11111111;
+		// }
+		// if (pwm_m[4].ResOnLocal) {
+		// 	PORTC = 0b11111111;
+		// }
+		// if (pwm_m[8].ResOnLocal) {
+		// 	PORTD = 0b11111111;
+		// }
+		delayLong();
+		delayLong();
+		delayLong();
+		delayLong();
+		delayLong();
+		delayLong();
+		delayLong();
+		delayLong();
 	}	//End main loop.
 	return 0;
 }
