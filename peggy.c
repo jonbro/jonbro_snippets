@@ -182,15 +182,21 @@ void update_pwm_m(struct pwm_manager * pm){
 		pm->ResOffCt = 0;
 		if (pm->SweepDir == 1){
 			pm->PWMVal++;
-			if (pm->PWMVal > 127){
-				pm->PWMVal = 127;
+			if (pm->PWMVal > 60){
+				pm->PWMVal = 60;
 				pm->SweepDir = 0;
 			}
-		}else{
+		}else if(pm->SweepDir == 0){
 			pm->PWMVal--;
 			if (pm->PWMVal == 0){
-				pm->SweepDir = 1;
+				pm->SweepDir = 3;
 			}
+		}else if(pm->SweepDir == 3){
+			pm->wait_counter--;
+			if (pm->wait_counter == 0){
+				pm->wait_counter = pm->wait_counter_i;
+				pm->SweepDir = 1;
+			}			
 		}
 	}
 	
@@ -259,23 +265,19 @@ int main (void)
 	DDRC = 255U;
 	DDRD = 255U;
 	
-	for(i=0;i<num_rows;i++){
+	for(i=0;i<num_rows;i++){ // set initial values for the pwms
 		pwm_m[i].ResOffCt = 0; 
 		pwm_m[i].ResOffCtLocal = 0;
 		pwm_m[i].phase = 0;
 		pwm_m[i].ResOn = 1; 
-		pwm_m[i].PWMVal = 8;
+		pwm_m[i].PWMVal = 8+i*10%60;
 		pwm_m[i].SweepDir = 1;
-		pwm_m[i].loop_length = 375-i*10;		
+		// pwm_m[i].loop_length = 475-i*10; // set slightly different LFO lengths for each pwm
+		pwm_m[i].loop_length = 230+i*10; // set slightly different LFO lengths for each pwm
+		pwm_m[i].wait_counter = 30;
+		pwm_m[i].wait_counter_i = 30;
 	}
 
-	// pwm_m.ResOffCt = 0; 
-	// pwm_m.ResOffCtLocal = 0;
-	// pwm_m.phase = 0;
-	// pwm_m.ResOn = 1; 
-	// pwm_m.PWMVal = 8;
-	// pwm_m.SweepDir = 1;
-	// pwm_m.loop_length = 375;
 	asm("sei");		// ENABLE global interrupts
 	for (;;){
 		
@@ -289,20 +291,23 @@ int main (void)
 		PORTC = 0;
 		PORTD = 0;
 		
-		for(i=0;i<12;i++){
+		for(i=0;i<24;i++){
 			pm = &pwm_m[i];        			/* put the address of 'pwm_m[0]' into 'pm' */
 			update_pwm_m(pm);
-			if(i<4){
+			if(i<8){
 				if(pwm_m[i].ResOnLocal){
-					PORTB ^= 0b000011 << i*2;
+					// PORTB ^= 0b000011 << i*2;
+					PORTB ^= 0b000001 << i;
 				}
-			}else if(i<8){
+			}else if(i<16){
 				if(pwm_m[i].ResOnLocal){
-					PORTC ^= 0b000011 << (i-4)*2;
+					// PORTC ^= 0b000011 << (i-4)*2;
+					PORTC ^= 0b000001 << i-8;
 				}
 			}else{
 				if(pwm_m[i].ResOnLocal){
-					PORTD ^= 0b000011 << (i-8)*2;
+					// PORTD ^= 0b000011 << (i-8)*2;
+					PORTD ^= 0b000001 << i-16;
 				}
 			}
 		}
